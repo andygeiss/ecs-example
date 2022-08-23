@@ -7,8 +7,10 @@
 
 [![Raylib](https://www.raylib.com/images/raylib_architecture_v4.2.png)](https://www.raylib.com/index.html)
 
-## Start benchmark with 100.000 moving entities
+## Start benchmark 
 
     go run main.go
+
+Result on my `i7-10510U with Intel GPU` ;-)
 
 ![Example](example.png)
