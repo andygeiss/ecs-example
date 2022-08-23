@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+// Stats ...
+type Stats struct {
+	dt         time.Duration
+	filterTime time.Duration
+	lookupTime time.Duration
+}
+
 // ShowEngineStats ...
 func ShowEngineStats(em core.EntityManager) core.Plugin {
 	frameTime := time.Now()
@@ -25,7 +32,7 @@ func ShowEngineStats(em core.EntityManager) core.Plugin {
 			t1 := time.Now()
 			em.FilterByMask(components.MaskPosition | components.MaskSize)
 			filterTime := time.Since(t1)
-			printStats(em, filterTime, dt, lookupTime)
+			printStats(em, &Stats{filterTime: filterTime, dt: dt, lookupTime: lookupTime})
 			updateTime = time.Now()
 		}
 		return core.StateEngineContinue
@@ -38,12 +45,12 @@ func printCurrentTime() {
 	_, _ = tm.Println(dash(47))
 }
 
-func printEngineStats(em core.EntityManager, filterTime time.Duration, dt time.Duration, lookupTime time.Duration) {
+func printEngineStats(em core.EntityManager, stats *Stats) {
 	_, _ = tm.Println(format("Engine Statistics:", ""))
 	_, _ = tm.Println(format("Entities:", fmt.Sprintf("%d", len(em.Entities()))))
-	_, _ = tm.Println(format("FilterTime:", fmt.Sprintf("%v", filterTime)))
-	_, _ = tm.Println(format("FrameTime:", fmt.Sprintf("%v", dt)))
-	_, _ = tm.Println(format("LookupTime:", fmt.Sprintf("%v", lookupTime)))
+	_, _ = tm.Println(format("FilterTime:", fmt.Sprintf("%v", stats.filterTime)))
+	_, _ = tm.Println(format("FrameTime:", fmt.Sprintf("%v", stats.dt)))
+	_, _ = tm.Println(format("LookupTime:", fmt.Sprintf("%v", stats.lookupTime)))
 	_, _ = tm.Println(dash(47))
 	_, _ = tm.Println()
 }
@@ -71,13 +78,13 @@ func printRuntimeStats() {
 	_, _ = tm.Println(dash(47))
 }
 
-func printStats(em core.EntityManager, filterTime time.Duration, dt time.Duration, lookupTime time.Duration) {
+func printStats(em core.EntityManager, stats *Stats) {
 	tm.Clear()
 	tm.MoveCursor(0, 0)
 	printCurrentTime()
 	printRuntimeStats()
 	printMemoryStats()
-	printEngineStats(em, filterTime, dt, lookupTime)
+	printEngineStats(em, stats)
 	tm.Flush()
 }
 

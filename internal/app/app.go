@@ -20,9 +20,17 @@ type App struct {
 // Setup ...
 func (a *App) Setup() {
 	em := entities.NewEntityManager()
-	em.Add(GenerateEntities(a.numEntities, a.width, a.height)...)
+	em.Add(GenerateEntities(a)...)
 	sm := systems.NewSystemManager()
-	sm.Add(NewMovement(), NewCollision(a.width, a.height), NewRendering(int32(a.width), int32(a.height), "", plugins.ShowEngineStats(em)))
+	sm.Add(
+		NewMovement(),
+		NewCollision(a.width, a.height),
+		NewRendering().(*Rendering).
+			WithWidth(a.width).
+			WithHeight(a.height).
+			WithTitle(a.title).
+			WithPlugins(plugins.ShowEngineStats(em)),
+	)
 	engine := engines.NewDefaultEngine(em, sm)
 	engine.Setup()
 	a.engine = engine
@@ -38,12 +46,27 @@ func (a *App) Teardown() {
 	a.engine.Teardown()
 }
 
+func (a *App) WithNumEntities(numEntities int) *App {
+	a.numEntities = numEntities
+	return a
+}
+
+func (a *App) WithWidth(width float32) *App {
+	a.width = width
+	return a
+}
+
+func (a *App) WithHeight(height float32) *App {
+	a.height = height
+	return a
+}
+
+func (a *App) WithTitle(title string) *App {
+	a.title = title
+	return a
+}
+
 // NewApp ...
-func NewApp(numEntities int, width, height float32, title string) core.Engine {
-	return &App{
-		numEntities: numEntities,
-		width:       width,
-		height:      height,
-		title:       title,
-	}
+func NewApp() core.Engine {
+	return &App{}
 }

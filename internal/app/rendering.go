@@ -51,6 +51,26 @@ func (r *Rendering) Teardown() {
 	})
 }
 
+func (r *Rendering) WithHeight(height float32) *Rendering {
+	r.height = int32(height)
+	return r
+}
+
+func (r *Rendering) WithPlugins(plugins ...core.Plugin) *Rendering {
+	r.plugins = plugins
+	return r
+}
+
+func (r *Rendering) WithTitle(title string) *Rendering {
+	r.title = title
+	return r
+}
+
+func (r *Rendering) WithWidth(width float32) *Rendering {
+	r.width = int32(width)
+	return r
+}
+
 func (r *Rendering) renderEntities(em core.EntityManager) {
 	for _, e := range em.FilterByMask(components.MaskPosition | components.MaskSize) {
 		position := e.Get(components.MaskPosition).(*components.Position)
@@ -60,11 +80,6 @@ func (r *Rendering) renderEntities(em core.EntityManager) {
 }
 
 // NewRendering ...
-func NewRendering(width, height int32, title string, plugins ...core.Plugin) core.System {
-	return &Rendering{
-		height:  height,
-		plugins: plugins,
-		title:   title,
-		width:   width,
-	}
+func NewRendering() core.System {
+	return &Rendering{}
 }
