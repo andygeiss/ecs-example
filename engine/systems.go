@@ -1,8 +1,9 @@
 package engine
 
 import (
-	"github.com/andygeiss/ecs"
-	"github.com/veandco/go-sdl2/sdl"
+	"github.com/andygeiss/ecs/core"
+	"github.com/andygeiss/utils/run"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 /*
@@ -16,13 +17,13 @@ import (
 
 // Collision ...
 type Collision struct {
-	height int32
-	width  int32
+	height float32
+	width  float32
 }
 
 func (m *Collision) Setup() {}
 
-func (m *Collision) Process(em *ecs.EntityManager) (state int) {
+func (m *Collision) Process(em core.EntityManager) (state int) {
 	for _, entity := range em.FilterByMask(MaskPosition | MaskVelocity) {
 		position := entity.Get(MaskPosition).(*Position)
 		velocity := entity.Get(MaskVelocity).(*Velocity)
@@ -33,11 +34,11 @@ func (m *Collision) Process(em *ecs.EntityManager) (state int) {
 			velocity.Y = -velocity.Y
 		}
 	}
-	return ecs.StateEngineContinue
+	return core.StateEngineContinue
 }
 
 // NewCollision ...
-func NewCollision(width, height int32) ecs.System {
+func NewCollision(width, height float32) core.System {
 	return &Collision{
 		height: height,
 		width:  width,
@@ -51,14 +52,14 @@ type Movement struct{}
 
 func (m *Movement) Setup() {}
 
-func (m *Movement) Process(em *ecs.EntityManager) (state int) {
+func (m *Movement) Process(em core.EntityManager) (state int) {
 	for _, entity := range em.FilterByMask(MaskPosition | MaskVelocity) {
 		position := entity.Get(MaskPosition).(*Position)
 		velocity := entity.Get(MaskVelocity).(*Velocity)
 		position.X += velocity.X
 		position.Y += velocity.Y
 	}
-	return ecs.StateEngineContinue
+	return core.StateEngineContinue
 }
 
 func (m *Movement) Teardown() {
@@ -66,84 +67,61 @@ func (m *Movement) Teardown() {
 }
 
 // NewMovement ...
-func NewMovement() ecs.System {
+func NewMovement() core.System {
 	return &Movement{}
 }
 
 // Rendering ...
 type Rendering struct {
-	renderer      *sdl.Renderer
-	plugins       []ecs.Plugin
+	plugins       []core.Plugin
 	title         string
-	window        *sdl.Window
 	width, height int32
 }
 
 func (r *Rendering) Setup() {
-	ecs.Do(func() {
-		r.window, _ = sdl.CreateWindow(r.title, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, r.width, r.height, sdl.WINDOW_SHOWN)
-		r.renderer, _ = sdl.CreateRenderer(r.window, -1, sdl.RENDERER_SOFTWARE)
+	run.Safe(func() {
+		rl.InitWindow(r.width, r.height, r.title)
+		rl.SetTargetFPS(60)
 	})
 }
 
-func (r *Rendering) Process(em *ecs.EntityManager) (state int) {
-	// First check if engine should stop.
+func (r *Rendering) Process(em core.EntityManager) (state int) {
 	shouldStop := false
-	ecs.Do(func() {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				shouldStop = true
-			}
+	run.Safe(func() {
+		// First check if engine should stop.
+		if rl.WindowShouldClose() {
+			shouldStop = true
 		}
-	})
-	if shouldStop {
-		return ecs.StateEngineStop
-	}
-	// Clear the screen
-	ecs.Do(func() {
-		_ = r.renderer.Clear()
-		_ = r.renderer.SetDrawColor(0, 0, 0, 0x20)
-		_ = r.renderer.FillRect(&sdl.Rect{0, 0, r.width, r.height})
-	})
-	// Render entities
-	ecs.Do(func() {
-		_ = r.renderer.SetDrawColor(255, 255, 255, 255)
+		// Clear the screen
+		rl.BeginDrawing()
+		rl.ClearBackground(rl.Black)
+		// Render entities
 		for _, e := range em.FilterByMask(MaskPosition | MaskSize) {
 			position := e.Get(MaskPosition).(*Position)
 			size := e.Get(MaskSize).(*Size)
-			_ = r.renderer.FillRect(&sdl.Rect{X: position.X, Y: position.Y, W: size.Width, H: size.Height})
+			rl.DrawRectangleRec(rl.Rectangle{X: position.X, Y: position.Y, Width: size.Width, Height: size.Height}, rl.Red)
 		}
+		rl.EndDrawing()
 	})
-	// Set FPS to 60
-	ecs.Do(func() {
-		r.renderer.Present()
-		sdl.Delay(1000 / 60)
-	})
-	// Save the window and renderer address for further usage in a plugin context.
-	for _, e := range em.FilterByMask(MaskRenderer) {
-		renderer := e.Get(MaskRenderer).(*Renderer)
-		renderer.Addr = r.renderer
-	}
-	for _, e := range em.FilterByMask(MaskWindow) {
-		window := e.Get(MaskWindow).(*Window)
-		window.Addr = r.window
+	// check for a stop.
+	if shouldStop {
+		return core.StateEngineStop
 	}
 	// Dispatch work to plugins.
 	for _, plugin := range r.plugins {
 		plugin(em)
 	}
-	return ecs.StateEngineContinue
+	return core.StateEngineContinue
 }
 
 func (r *Rendering) Teardown() {
-	_ = r.window.Destroy()
-	_ = r.renderer.Destroy()
-	sdl.Quit()
+	run.Safe(func() {
+		rl.CloseWindow()
+	})
 }
 
 // NewRendering ...
-func NewRendering(width, height int32, title string, plugins ...ecs.Plugin) ecs.System {
+func NewRendering(width, height int32, title string, plugins ...core.Plugin) core.System {
 	return &Rendering{
 		height:  height,
 		plugins: plugins,

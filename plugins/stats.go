@@ -2,19 +2,19 @@ package plugins
 
 import (
 	"fmt"
-	"github.com/andygeiss/ecs"
 	"github.com/andygeiss/ecs-example/engine"
+	"github.com/andygeiss/ecs/core"
 	tm "github.com/buger/goterm"
 	"runtime"
 	"time"
 )
 
 // ShowEngineStats ...
-func ShowEngineStats(em *ecs.EntityManager) ecs.Plugin {
+func ShowEngineStats(em core.EntityManager) core.Plugin {
 	frameTime := time.Now()
 	updateTime := time.Now()
 	// Return a plugin which will be called by the renderer.
-	return func(entityManager *ecs.EntityManager) (state int) {
+	return func(entityManager core.EntityManager) (state int) {
 		dt := time.Since(frameTime)
 		frameTime = time.Now()
 		// Statistics will be updateTime every 2 seconds.
@@ -55,13 +55,12 @@ func ShowEngineStats(em *ecs.EntityManager) ecs.Plugin {
 			_, _ = tm.Println(format("FilterTime:", fmt.Sprintf("%v", filterTime)))
 			_, _ = tm.Println(format("FrameTime:", fmt.Sprintf("%v", dt)))
 			_, _ = tm.Println(format("LookupTime:", fmt.Sprintf("%v", lookupTime)))
-			_, _ = tm.Println(format("Version:", ecs.Version))
 			_, _ = tm.Println(dash(47))
 			_, _ = tm.Println()
 			tm.Flush()
 			updateTime = time.Now()
 		}
-		return ecs.StateEngineContinue
+		return core.StateEngineContinue
 	}
 }
 

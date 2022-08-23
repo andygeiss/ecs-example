@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/andygeiss/ecs"
 	"github.com/andygeiss/ecs-example/engine"
 	"github.com/andygeiss/ecs-example/plugins"
+	"github.com/andygeiss/ecs/core"
+	"github.com/andygeiss/ecs/engines"
+	"github.com/andygeiss/ecs/entities"
+	"github.com/andygeiss/ecs/systems"
+	"github.com/andygeiss/utils/run"
 	"math/rand"
 )
 
@@ -13,34 +17,33 @@ const (
 	Height = 600
 )
 
-func generateEntities(num int) []*ecs.Entity {
-	out := make([]*ecs.Entity, num)
+func generateEntities(num int) []*core.Entity {
+	out := make([]*core.Entity, num)
 	for i := range out {
-		out[i] = ecs.NewEntity(fmt.Sprintf("%d", i), []ecs.Component{
-			engine.NewPosition(rand.Int31()%Width, rand.Int31()%Height),
+		out[i] = core.NewEntity(fmt.Sprintf("%d", i), []core.Component{
+			engine.NewPosition(rand.Float32()*Width, rand.Float32()*Height),
 			engine.NewSize(10, 10),
-			engine.NewVelocity(rand.Int31()%10, rand.Int31()%10),
+			engine.NewVelocity(rand.Float32()*10, rand.Float32()*10),
 		})
 	}
 	return out
 }
 
-func run() {
-	em := ecs.NewEntityManager()
-	em.Add(generateEntities(1000)...)
-	sm := ecs.NewSystemManager()
-	sm.Add(
-		engine.NewMovement(),
-		engine.NewCollision(Width, Height),
-		engine.NewRendering(Width, Height, "ECS with SDL Demo",
-			plugins.ShowEngineStats(em),
-		),
-	)
-	ecs.Run(em, sm)
-}
-
 func main() {
-	ecs.Main(func() {
-		run()
+	run.Main(func() {
+		em := entities.NewEntityManager()
+		em.Add(generateEntities(1000)...)
+		sm := systems.NewSystemManager()
+		sm.Add(
+			engine.NewMovement(),
+			engine.NewCollision(Width, Height),
+			engine.NewRendering(Width, Height, "ECS with Raylib Demo",
+				plugins.ShowEngineStats(em),
+			),
+		)
+		e := engines.NewDefaultEngine(em, sm)
+		e.Setup()
+		defer e.Teardown()
+		e.Run()
 	})
 }

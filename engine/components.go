@@ -19,13 +19,13 @@ const (
 
 // Position ...
 type Position struct {
-	ID string `json:"id"`
-	X  int32  `json:"x"`
-	Y  int32  `json:"y"`
+	ID string  `json:"id"`
+	X  float32 `json:"x"`
+	Y  float32 `json:"y"`
 }
 
 // NewPosition ...
-func NewPosition(x, y int32) *Position {
+func NewPosition(x, y float32) *Position {
 	return &Position{
 		ID: "position",
 		X:  x,
@@ -56,13 +56,13 @@ func (m *Renderer) Mask() uint64 {
 
 // Size ...
 type Size struct {
-	ID     string `json:"id"`
-	Height int32  `json:"height"`
-	Width  int32  `json:"width"`
+	ID     string  `json:"id"`
+	Height float32 `json:"height"`
+	Width  float32 `json:"width"`
 }
 
 // NewSize ...
-func NewSize(width, height int32) *Size {
+func NewSize(width, height float32) *Size {
 	return &Size{
 		ID:     "size",
 		Width:  width,
@@ -76,13 +76,13 @@ func (s *Size) Mask() uint64 {
 
 // Velocity ...
 type Velocity struct {
-	ID string `json:"id"`
-	X  int32  `json:"x"`
-	Y  int32  `json:"y"`
+	ID string  `json:"id"`
+	X  float32 `json:"x"`
+	Y  float32 `json:"y"`
 }
 
 // NewVelocity ...
-func NewVelocity(x, y int32) *Velocity {
+func NewVelocity(x, y float32) *Velocity {
 	return &Velocity{
 		ID: "velocity",
 		X:  x,
