@@ -2,7 +2,7 @@ package plugins
 
 import (
 	"fmt"
-	"github.com/andygeiss/ecs-example/engine"
+	"github.com/andygeiss/ecs-example/internal/components"
 	"github.com/andygeiss/ecs/core"
 	tm "github.com/buger/goterm"
 	"runtime"
@@ -25,7 +25,7 @@ func ShowEngineStats(em core.EntityManager) core.Plugin {
 			lookupTime := time.Since(t0)
 
 			t1 := time.Now()
-			em.FilterByMask(engine.MaskPosition | engine.MaskSize)
+			em.FilterByMask(components.MaskPosition | components.MaskSize)
 			filterTime := time.Since(t1)
 
 			tm.Clear()
