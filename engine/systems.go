@@ -81,7 +81,6 @@ type Rendering struct {
 func (r *Rendering) Setup() {
 	run.Safe(func() {
 		rl.InitWindow(r.width, r.height, r.title)
-		rl.SetTargetFPS(60)
 	})
 }
 
@@ -101,6 +100,7 @@ func (r *Rendering) Process(em core.EntityManager) (state int) {
 			size := e.Get(MaskSize).(*Size)
 			rl.DrawRectangleRec(rl.Rectangle{X: position.X, Y: position.Y, Width: size.Width, Height: size.Height}, rl.Red)
 		}
+		rl.DrawFPS(10, 10)
 		rl.EndDrawing()
 	})
 	// check for a stop.

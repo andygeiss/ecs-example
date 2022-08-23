@@ -7,4 +7,8 @@
 
 [![Raylib](https://www.raylib.com/images/raylib_architecture_v4.2.png)](https://www.raylib.com/index.html)
 
+## Start benchmark with 100.000 moving entities
 
+    go run main.go
+
+![Example](example.png)

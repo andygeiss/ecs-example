@@ -22,7 +22,7 @@ func generateEntities(num int) []*core.Entity {
 	for i := range out {
 		out[i] = core.NewEntity(fmt.Sprintf("%d", i), []core.Component{
 			engine.NewPosition(rand.Float32()*Width, rand.Float32()*Height),
-			engine.NewSize(10, 10),
+			engine.NewSize(3, 3),
 			engine.NewVelocity(rand.Float32()*10, rand.Float32()*10),
 		})
 	}
@@ -32,7 +32,7 @@ func generateEntities(num int) []*core.Entity {
 func main() {
 	run.Main(func() {
 		em := entities.NewEntityManager()
-		em.Add(generateEntities(1000)...)
+		em.Add(generateEntities(100000)...)
 		sm := systems.NewSystemManager()
 		sm.Add(
 			engine.NewMovement(),
