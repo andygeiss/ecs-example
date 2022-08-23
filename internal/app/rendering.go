@@ -30,12 +30,7 @@ func (r *Rendering) Process(em core.EntityManager) (state int) {
 		// Clear the screen
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Black)
-		// Render entities
-		for _, e := range em.FilterByMask(components.MaskPosition | components.MaskSize) {
-			position := e.Get(components.MaskPosition).(*components.Position)
-			size := e.Get(components.MaskSize).(*components.Size)
-			rl.DrawRectangleRec(rl.Rectangle{X: position.X, Y: position.Y, Width: size.Width, Height: size.Height}, rl.Blue)
-		}
+		r.renderEntities(em)
 		rl.DrawFPS(10, 10)
 		rl.EndDrawing()
 	})
@@ -54,6 +49,14 @@ func (r *Rendering) Teardown() {
 	run.Safe(func() {
 		rl.CloseWindow()
 	})
+}
+
+func (r *Rendering) renderEntities(em core.EntityManager) {
+	for _, e := range em.FilterByMask(components.MaskPosition | components.MaskSize) {
+		position := e.Get(components.MaskPosition).(*components.Position)
+		size := e.Get(components.MaskSize).(*components.Size)
+		rl.DrawRectangleRec(rl.Rectangle{X: position.X, Y: position.Y, Width: size.Width, Height: size.Height}, rl.Blue)
+	}
 }
 
 // NewRendering ...
