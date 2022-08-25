@@ -11,7 +11,7 @@
 
     go run main.go
 
-Settings in [entrypoint.go](https://github.com/andygeiss/ecs-example/tree/main/internal/app/entrypoint.go):
+Settings in [main.go](https://github.com/andygeiss/ecs-example/tree/main/main.go):
 - 200.000 Entities
 - Resolution: 1366 x 768
 
