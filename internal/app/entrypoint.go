@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/andygeiss/ecs-example/internal/entities"
 	"github.com/andygeiss/ecs-example/internal/plugins"
 	"github.com/andygeiss/ecs-example/internal/systems"
 	"github.com/andygeiss/utils/engine"
@@ -9,14 +8,15 @@ import (
 )
 
 // Entrypoint ...
-func Entrypoint(num, width, height int, title string, er entity.Repository) {
-	er.Add(entities.Generate(num, width, height)...)
+func Entrypoint(cfg *Config, er entity.Repository) {
+	er.Add(Generate(cfg)...)
 	e := engine.DefaultEngine.
-		WithSystems(systems.NewCollision(width, height, er)).
+		WithSystems(systems.NewCollision(er).(*systems.Collision).
+			WithWidth(cfg.Width).WithHeight(cfg.Height)).
 		WithSystems(systems.NewMovement(er)).
 		WithSystems(systems.NewRendering(er).(*systems.Rendering).
-			WithWidth(width).WithHeight(height).
-			WithTitle(title).WithPlugins(plugins.ShowEngineStats()),
+			WithWidth(cfg.Width).WithHeight(cfg.Height).
+			WithTitle(cfg.Title).WithPlugins(plugins.ShowEngineStats()),
 		)
 	e.Setup()
 	defer e.Teardown()

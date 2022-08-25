@@ -7,7 +7,13 @@ import (
 )
 
 func main() {
+	cfg := app.Config{
+		NumberOfEntities: 200000,
+		Width:            1366,
+		Height:           768,
+		Title:            "ECS Example Benchmark",
+	}
 	run.Main(func() {
-		app.Entrypoint(200000, 1366, 768, "ECS benchmark example", entity.DefaultRepository)
+		app.Entrypoint(&cfg, entity.DefaultRepository)
 	})
 }

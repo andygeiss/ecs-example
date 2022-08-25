@@ -37,11 +37,19 @@ func (a *Collision) Teardown() {
 
 }
 
+func (a *Collision) WithHeight(height int) *Collision {
+	a.height = float32(height)
+	return a
+}
+
+func (a *Collision) WithWidth(width int) *Collision {
+	a.width = float32(width)
+	return a
+}
+
 // NewCollision ...
-func NewCollision(width, height int, er entity.Repository) engine.System {
+func NewCollision(er entity.Repository) engine.System {
 	return &Collision{
-		height: float32(height),
-		width:  float32(width),
-		er:     er,
+		er: er,
 	}
 }
