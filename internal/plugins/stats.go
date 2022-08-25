@@ -3,7 +3,8 @@ package plugins
 import (
 	"fmt"
 	"github.com/andygeiss/ecs-example/internal/components"
-	"github.com/andygeiss/ecs/core"
+	"github.com/andygeiss/utils/engine"
+	"github.com/andygeiss/utils/engine/entity"
 	tm "github.com/buger/goterm"
 	"runtime"
 	"time"
@@ -17,25 +18,24 @@ type Stats struct {
 }
 
 // ShowEngineStats ...
-func ShowEngineStats(em core.EntityManager) core.Plugin {
+func ShowEngineStats(er entity.Repository) engine.Plugin {
 	frameTime := time.Now()
 	updateTime := time.Now()
 	// Return a plugin which will be called by the renderer.
-	return func(entityManager core.EntityManager) (state int) {
+	return func(er entity.Repository) {
 		dt := time.Since(frameTime)
 		frameTime = time.Now()
 		// Statistics will be updateTime every 2 seconds.
 		if time.Since(updateTime) >= time.Second*2 {
 			t0 := time.Now()
-			em.Get("worst_case_lookup")
+			er.Get("worst_case_lookup")
 			lookupTime := time.Since(t0)
 			t1 := time.Now()
-			em.FilterByMask(components.MaskPosition | components.MaskSize)
+			er.FilterByMask(components.MaskPosition | components.MaskSize)
 			filterTime := time.Since(t1)
-			printStats(em, &Stats{filterTime: filterTime, dt: dt, lookupTime: lookupTime})
+			printStats(er, &Stats{filterTime: filterTime, dt: dt, lookupTime: lookupTime})
 			updateTime = time.Now()
 		}
-		return core.StateEngineContinue
 	}
 }
 
@@ -45,9 +45,9 @@ func printCurrentTime() {
 	_, _ = tm.Println(dash(47))
 }
 
-func printEngineStats(em core.EntityManager, stats *Stats) {
+func printEngineStats(repo entity.Repository, stats *Stats) {
 	_, _ = tm.Println(format("Engine Statistics:", ""))
-	_, _ = tm.Println(format("Entities:", fmt.Sprintf("%d", len(em.Entities()))))
+	_, _ = tm.Println(format("Entities:", fmt.Sprintf("%d", len(repo.Entities()))))
 	_, _ = tm.Println(format("FilterTime:", fmt.Sprintf("%v", stats.filterTime)))
 	_, _ = tm.Println(format("FrameTime:", fmt.Sprintf("%v", stats.dt)))
 	_, _ = tm.Println(format("LookupTime:", fmt.Sprintf("%v", stats.lookupTime)))
@@ -78,13 +78,13 @@ func printRuntimeStats() {
 	_, _ = tm.Println(dash(47))
 }
 
-func printStats(em core.EntityManager, stats *Stats) {
+func printStats(repo entity.Repository, stats *Stats) {
 	tm.Clear()
 	tm.MoveCursor(0, 0)
 	printCurrentTime()
 	printRuntimeStats()
 	printMemoryStats()
-	printEngineStats(em, stats)
+	printEngineStats(repo, stats)
 	tm.Flush()
 }
 
