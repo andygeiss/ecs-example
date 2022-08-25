@@ -18,7 +18,7 @@ type Stats struct {
 }
 
 // ShowEngineStats ...
-func ShowEngineStats(er entity.Repository) engine.Plugin {
+func ShowEngineStats() engine.Plugin {
 	frameTime := time.Now()
 	updateTime := time.Now()
 	// Return a plugin which will be called by the renderer.
