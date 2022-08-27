@@ -11,12 +11,16 @@ import (
 func Entrypoint(cfg *Config, er entity.Repository) {
 	er.Add(Generate(cfg)...)
 	e := engine.DefaultEngine.
-		WithSystems(systems.NewCollision(er).(*systems.Collision).
-			WithWidth(cfg.Width).WithHeight(cfg.Height)).
-		WithSystems(systems.NewMovement(er)).
-		WithSystems(systems.NewRendering(er).(*systems.Rendering).
-			WithWidth(cfg.Width).WithHeight(cfg.Height).
-			WithTitle(cfg.Title).WithPlugins(plugins.ShowEngineStats()),
+		WithSystems(
+			systems.NewCollision(er).(*systems.Collision).
+				WithWidth(cfg.Width).
+				WithHeight(cfg.Height),
+			systems.NewMovement(er),
+			systems.NewRendering(er).(*systems.Rendering).
+				WithWidth(cfg.Width).
+				WithHeight(cfg.Height).
+				WithTitle(cfg.Title).
+				WithPlugins(plugins.ShowEngineStats()),
 		)
 	e.Setup()
 	defer e.Teardown()
