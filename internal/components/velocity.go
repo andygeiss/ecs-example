@@ -1,8 +1,6 @@
 package components
 
-const (
-	MaskVelocity = uint64(1 << 2)
-)
+import "github.com/andygeiss/utils/engine/entity"
 
 // Velocity ...
 type Velocity struct {
@@ -11,15 +9,23 @@ type Velocity struct {
 	Y  float32 `json:"y"`
 }
 
-// NewVelocity ...
-func NewVelocity(x, y float32) *Velocity {
-	return &Velocity{
-		ID: "velocity",
-		X:  x,
-		Y:  y,
-	}
+func (a *Velocity) Mask() uint64 {
+	return MaskVelocity
 }
 
-func (s *Velocity) Mask() uint64 {
-	return MaskVelocity
+func (a *Velocity) WithX(x float32) *Velocity {
+	a.X = x
+	return a
+}
+
+func (a *Velocity) WithY(y float32) *Velocity {
+	a.Y = y
+	return a
+}
+
+// NewVelocity ...
+func NewVelocity() entity.Component {
+	return &Velocity{
+		ID: "velocity",
+	}
 }

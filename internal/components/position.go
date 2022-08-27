@@ -1,8 +1,6 @@
 package components
 
-const (
-	MaskPosition = uint64(1 << 0)
-)
+import "github.com/andygeiss/utils/engine/entity"
 
 // Position ...
 type Position struct {
@@ -11,15 +9,23 @@ type Position struct {
 	Y  float32 `json:"y"`
 }
 
-// NewPosition ...
-func NewPosition(x, y float32) *Position {
-	return &Position{
-		ID: "position",
-		X:  x,
-		Y:  y,
-	}
+func (a *Position) Mask() uint64 {
+	return MaskPosition
 }
 
-func (p *Position) Mask() uint64 {
-	return MaskPosition
+func (a *Position) WithX(x float32) *Position {
+	a.X = x
+	return a
+}
+
+func (a *Position) WithY(y float32) *Position {
+	a.Y = y
+	return a
+}
+
+// NewPosition ...
+func NewPosition() entity.Component {
+	return &Position{
+		ID: "position",
+	}
 }

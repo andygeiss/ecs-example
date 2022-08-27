@@ -12,9 +12,15 @@ func Generate(cfg *Config) []*entity.Entity {
 	out := make([]*entity.Entity, cfg.NumberOfEntities)
 	for i := range out {
 		out[i] = entity.NewEntity(fmt.Sprintf("%d", i), []entity.Component{
-			components.NewPosition(rand.Float32()*float32(cfg.Width), rand.Float32()*float32(cfg.Height)),
-			components.NewSize(3, 3),
-			components.NewVelocity(rand.Float32()*10, rand.Float32()*10),
+			components.NewPosition().(*components.Position).
+				WithX(rand.Float32() * float32(cfg.Width)).
+				WithY(rand.Float32() * float32(cfg.Height)),
+			components.NewSize().(*components.Size).
+				WithWidth(3).
+				WithHeight(3),
+			components.NewVelocity().(*components.Velocity).
+				WithX(rand.Float32() * 10).
+				WithY(rand.Float32() * 10),
 		})
 	}
 	return out

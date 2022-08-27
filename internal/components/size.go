@@ -1,8 +1,6 @@
 package components
 
-const (
-	MaskSize = uint64(1 << 1)
-)
+import "github.com/andygeiss/utils/engine/entity"
 
 // Size ...
 type Size struct {
@@ -11,15 +9,23 @@ type Size struct {
 	Width  float32 `json:"width"`
 }
 
-// NewSize ...
-func NewSize(width, height float32) *Size {
-	return &Size{
-		ID:     "size",
-		Width:  width,
-		Height: height,
-	}
+func (a *Size) Mask() uint64 {
+	return MaskSize
 }
 
-func (s *Size) Mask() uint64 {
-	return MaskSize
+func (a *Size) WithHeight(height float32) *Size {
+	a.Height = height
+	return a
+}
+
+func (a *Size) WithWidth(width float32) *Size {
+	a.Width = width
+	return a
+}
+
+// NewSize ...
+func NewSize() entity.Component {
+	return &Size{
+		ID: "size",
+	}
 }
