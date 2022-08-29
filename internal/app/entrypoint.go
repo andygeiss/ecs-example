@@ -24,6 +24,5 @@ func Entrypoint(cfg *Config, er entity.Repository) {
 		)
 	e.Setup()
 	defer e.Teardown()
-	for e.State() == engine.StateEngineRunning {
-	}
+	e.Start()
 }
