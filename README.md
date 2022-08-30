@@ -1,5 +1,8 @@
 # ECS with Raylib Renderer
 
+[![](https://img.shields.io/github/license/andygeiss/ecs-example)](https://github.com/andygeiss/ecs-example/blob/master/LICENSE)
+[![](https://img.shields.io/github/v/release/andygeiss/ecs-example)](https://github.com/andygeiss/ecs-example/releases)
+[![](https://img.shields.io/github/go-mod/go-version/andygeiss/ecs-example)](https://github.com/andygeiss/ecs-example)
 [![Go Report Card](https://goreportcard.com/badge/github.com/andygeiss/ecs-example)](https://goreportcard.com/report/github.com/andygeiss/ecs-example)
 [![BCH compliance](https://bettercodehub.com/edge/badge/andygeiss/ecs-example?branch=main)](https://bettercodehub.com/)
 
